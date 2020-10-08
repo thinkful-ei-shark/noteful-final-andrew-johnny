@@ -36,11 +36,21 @@ export default class AddFolder extends Component {
       });
   };
 
+  validateName() {
+    const name = this.state.name.trim();
+    if (name.length === 0) {
+      return "name is required";
+    }
+  }
+
   render() {
     console.log("this is context", this.context);
     return (
       <div>
-        <form className="addFolder-Form" onSubmit={(e) => this.handleSubmit(e)}>
+        <form
+          className="addFolder-Form"
+          onSubmit={(e) => this.handleSubmit(e)}
+        >
           <label htmlFor="folderName">Name: </label>
           <input
             type="text"
@@ -49,7 +59,7 @@ export default class AddFolder extends Component {
             onChange={(e) => this.handleChange(e)}
             required
           />
-          <input type="submit" />
+          <input type="submit" disabled={this.validateName()} />
         </form>
       </div>
     );

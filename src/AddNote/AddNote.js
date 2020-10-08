@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
+import './AddNote.css'
 import ApiContext from "../ApiContext";
 
 class AddNote extends Component {
@@ -42,6 +43,18 @@ class AddNote extends Component {
       });
   };
 
+   validateName() {
+    const name = this.state.name.trim();
+    if (name.length === 0) {
+      return "name is required";
+    }
+  }
+  validateContent(){
+      const content = this.state.content
+      if (content.length === 0){
+          return "content is required"
+      }
+  }
   render() {
     const folderOptions = this.context.folders.map((folder) => {
       return (
@@ -73,7 +86,7 @@ class AddNote extends Component {
             required
             onChange={(e) => this.handleChangeContent(e)}
           />
-          <input type="submit" />
+          <input type="submit" disabled = {this.validateName()||this.validateContent()}/>
         </form>
       </div>
     );

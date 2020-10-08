@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Route, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddFolder from "../AddFolder/AddFolder";
+import ErrorBoundary from '../ErrorBoundary'
 import AddNote from "../AddNote/AddNote";
 import NoteListNav from "../NoteListNav/NoteListNav";
 import NotePageNav from "../NotePageNav/NotePageNav";
@@ -58,25 +59,25 @@ class App extends Component {
 
   renderNavRoutes() {
     return (
-      <>
+      <ErrorBoundary>
         {["/", "/folder/:folderId"].map((path) => (
           <Route exact key={path} path={path} component={NoteListNav} />
         ))}
         <Route path="/note/:noteId" component={NotePageNav} />
         <Route path="/add-folder" component={NotePageNav} />
-      </>
+      </ErrorBoundary>
     );
   }
 
   renderMainRoutes() {
     return (
-      <>
+      <ErrorBoundary>
         {["/", "/folder/:folderId"].map((path) => (
           <Route exact key={path} path={path} component={NoteListMain} />
         ))}
         <Route path="/note/:noteId" component={NotePageMain} />
         <Route path="/add-note" component={AddNote} />
-      </>
+      </ErrorBoundary>
     );
   }
 
