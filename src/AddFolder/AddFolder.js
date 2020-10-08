@@ -22,7 +22,7 @@ export default class AddFolder extends Component {
     console.log(newFolder);
     fetch("http://localhost:9090/folders", {
       method: "POST",
-      header: {
+      headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify(newFolder),
