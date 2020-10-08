@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import cuid from "cuid";
+import ApiContext from "../ApiContext";
 
 export default class AddFolder extends Component {
+  static contextType = ApiContext;
+
   state = {
     id: "",
     name: "",
@@ -12,8 +15,7 @@ export default class AddFolder extends Component {
   };
 
   handleSubmit = (e) => {
-    
-    this.setState({ id: cuid });
+    e.preventDefault();
     let newName = this.state.name;
     console.log(this.state.name);
     let newFolder = {
@@ -26,11 +28,16 @@ export default class AddFolder extends Component {
         "content-type": "application/json",
       },
       body: JSON.stringify(newFolder),
-    }).then((response) => response.json())
-    .then(this.props.handleAdding())
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        this.context.addFolder(data);
+      });
   };
 
   render() {
+    console.log("this is context", this.context);
     return (
       <div>
         <form className="addFolder-Form" onSubmit={(e) => this.handleSubmit(e)}>

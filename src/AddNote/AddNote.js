@@ -1,22 +1,47 @@
 import React, { Component } from "react";
-import cuid from "cuid";
+import { Redirect } from "react-router-dom";
 import ApiContext from "../ApiContext";
 
 class AddNote extends Component {
   static contextType = ApiContext;
-state={
-    id:cuid(),
-    name:"",
+  state = {
+    name: "",
     folderId: "",
     content: "",
-    modified:''
-}
-handleChangeName=(e)=>{
-this.setState({name:e.currentTarget.value})
-}
-handleChangeConten=(e)=>{
-    this.setState({content:e.currentTarget.value})
-}
+    modified: "",
+  };
+
+  // two way binders
+  handleChangeName = (e) => {
+    this.setState({ name: e.currentTarget.value });
+  };
+  handleChangeContent = (e) => {
+    this.setState({ content: e.currentTarget.value });
+  };
+
+  handleNoteSubmit = (e) => {
+    e.preventDefault();
+    let newNote = {
+      name: this.state.name,
+      modified: new Date(),
+      folderId: e.currentTarget.querySelector("select").value,
+      content: this.state.content,
+    };
+    console.log("this is new note", newNote);
+    fetch("http://localhost:9090/notes", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(newNote),
+    })
+      .then((response) => response.json)
+      .then((data) => this.context.addNote(data))
+      .then(() => {
+        this.props.history.goBack();
+      });
+  };
+
   render() {
     const folderOptions = this.context.folders.map((folder) => {
       return (
@@ -30,7 +55,7 @@ handleChangeConten=(e)=>{
       <div>
         <form
           className="addNote-Form"
-          onSubmit={(e) => this.handleSubmit(e)}
+          onSubmit={(e) => this.handleNoteSubmit(e)}
         >
           <label htmlFor="name">Note Title: </label>
           <input
@@ -43,7 +68,11 @@ handleChangeConten=(e)=>{
           <label htmlFor="selectFolder">Select Folder:</label>
           <select id="selectFolder">{folderOptions}</select>
           <label htmlFor="note-content"> Note Content: </label>
-          <textarea id="note-content" required onChange={(e) => this.handleChangeContent(e)}/>
+          <textarea
+            id="note-content"
+            required
+            onChange={(e) => this.handleChangeContent(e)}
+          />
           <input type="submit" />
         </form>
       </div>

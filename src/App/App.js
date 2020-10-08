@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Route, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddFolder from "../AddFolder/AddFolder";
-import AddNote from "../AddNote/AddNote"
+import AddNote from "../AddNote/AddNote";
 import NoteListNav from "../NoteListNav/NoteListNav";
 import NotePageNav from "../NotePageNav/NotePageNav";
 import NoteListMain from "../NoteListMain/NoteListMain";
@@ -37,30 +37,22 @@ class App extends Component {
       });
   }
 
-  componentDidUpdate(){
-    Promise.all([
-      fetch(`${config.API_ENDPOINT}/notes`),
-      fetch(`${config.API_ENDPOINT}/folders`),
-    ])
-      .then(([notesRes, foldersRes]) => {
-        if (!notesRes.ok) return notesRes.json().then((e) => Promise.reject(e));
-        if (!foldersRes.ok)
-          return foldersRes.json().then((e) => Promise.reject(e));
-
-        return Promise.all([notesRes.json(), foldersRes.json()]);
-      })
-      .then(([notes, folders]) => {
-        this.setState({ notes, folders });
-      })
-      .catch((error) => {
-        console.error({ error });
-      });
-  }
-  
-
   handleDeleteNote = (noteId) => {
     this.setState({
       notes: this.state.notes.filter((note) => note.id !== noteId),
+    });
+  };
+
+  handleAddFolder = (folder) => {
+    console.log("folder added");
+    this.setState({
+      folders: [...this.state.folders, folder],
+    });
+  };
+
+  handleAddNote = (note) => {
+    this.setState({
+      notes: [...this.state.notes, note],
     });
   };
 
@@ -72,7 +64,6 @@ class App extends Component {
         ))}
         <Route path="/note/:noteId" component={NotePageNav} />
         <Route path="/add-folder" component={NotePageNav} />
-        
       </>
     );
   }
@@ -94,6 +85,8 @@ class App extends Component {
       notes: this.state.notes,
       folders: this.state.folders,
       deleteNote: this.handleDeleteNote,
+      addFolder: this.handleAddFolder,
+      addNote: this.handleAddNote,
     };
     return (
       <ApiContext.Provider value={value}>
