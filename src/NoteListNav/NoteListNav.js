@@ -17,7 +17,10 @@ export default class NoteListNav extends React.Component {
   static contextType = ApiContext;
 
   addFolderHandler = () => {
-    this.setState({ adding: !this.state.adding });
+    console.log("notelist nav state before: ", this.state)
+    this.setState({ adding: !this.state.adding })
+    this.forceUpdate()
+    console.log("notelist nave state: ", this.state);
   };
 
   render() {
@@ -49,7 +52,7 @@ export default class NoteListNav extends React.Component {
             <br />
             Folder
           </CircleButton>
-          {this.state.adding && <AddFolder />}
+          {this.state.adding && <AddFolder handleAdding={this.addFolderHandler}/>}
         </div>
       </div>
     );

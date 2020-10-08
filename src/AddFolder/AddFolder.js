@@ -12,7 +12,7 @@ export default class AddFolder extends Component {
   };
 
   handleSubmit = (e) => {
-    e.preventDefault();
+    
     this.setState({ id: cuid });
     let newName = this.state.name;
     console.log(this.state.name);
@@ -26,14 +26,15 @@ export default class AddFolder extends Component {
         "content-type": "application/json",
       },
       body: JSON.stringify(newFolder),
-    }).then((response) => response.json());
+    }).then((response) => response.json())
+    .then(this.props.handleAdding())
   };
 
   render() {
     return (
       <div>
         <form className="addFolder-Form" onSubmit={(e) => this.handleSubmit(e)}>
-          <label htmlFor="name">Name: </label>
+          <label htmlFor="folderName">Name: </label>
           <input
             type="text"
             name="folderName"
