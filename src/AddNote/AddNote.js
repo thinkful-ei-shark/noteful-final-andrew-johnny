@@ -10,6 +10,7 @@ class AddNote extends Component {
     folderId: "",
     content: "",
     modified: "",
+    error: null
   };
 
   // two way binders
@@ -28,7 +29,6 @@ class AddNote extends Component {
       folderId: e.currentTarget.querySelector("select").value,
       content: this.state.content,
     };
-    console.log("this is new note", newNote);
     fetch("http://localhost:9090/notes", {
       method: "POST",
       headers: {
@@ -36,11 +36,17 @@ class AddNote extends Component {
       },
       body: JSON.stringify(newNote),
     })
-      .then((response) => response.json)
-      .then((data) => this.context.addNote(data))
-      .then(() => {
-        this.props.history.goBack();
-      });
+      .then((response) => {
+        if(!response.ok) {
+          throw Error(response.statusText)
+        }
+       return response.json()
+      })
+      .then((data) => {
+        this.context.addNote(data);
+        this.props.history.push(`/note/${data.id}`);
+      })
+      .catch(err => this.setState({error: err.message}));
   };
 
    validateName() {
@@ -63,6 +69,11 @@ class AddNote extends Component {
         </option>
       );
     });
+
+    let errorRender = null; 
+    if(this.state.error) {
+      errorRender = <p className='error-message'>{this.state.error}</p>
+    }
 
     return (
       <div>
@@ -87,6 +98,7 @@ class AddNote extends Component {
             onChange={(e) => this.handleChangeContent(e)}
           />
           <input type="submit" disabled = {this.validateName()||this.validateContent()}/>
+          {errorRender}
         </form>
       </div>
     );
