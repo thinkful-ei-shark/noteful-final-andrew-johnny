@@ -1,13 +1,16 @@
 import React, { Component } from "react";
-import cuid from "cuid";
+
 import ApiContext from "../ApiContext";
+
+import './AddFolder.css'
 
 export default class AddFolder extends Component {
   static contextType = ApiContext;
 
   state = {
     id: "",
-    name: ""
+    name: "",
+    error: null
   };
 
   handleChange = (e) => {
@@ -36,7 +39,7 @@ export default class AddFolder extends Component {
       .then((data) => {
         this.context.addFolder(data);
       })
-      .catch(err => console.log(err.message));
+      .catch(err => this.setState({error: err.message}));
   };
 
   validateName() {
@@ -47,6 +50,11 @@ export default class AddFolder extends Component {
   }
 
   render() {
+    let renderError = null;
+    if(this.state.error) {
+      renderError = <p className='error-message'>{this.state.error}</p>
+    }
+
     return (
       <div>
         <form
@@ -62,6 +70,7 @@ export default class AddFolder extends Component {
             required
           />
           <input type="submit" disabled={this.validateName()} />
+          {renderError}
         </form>
       </div>
     );
