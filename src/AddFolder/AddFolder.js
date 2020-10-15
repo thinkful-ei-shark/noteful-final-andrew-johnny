@@ -7,7 +7,7 @@ export default class AddFolder extends Component {
 
   state = {
     id: "",
-    name: "",
+    name: ""
   };
 
   handleChange = (e) => {
@@ -17,11 +17,9 @@ export default class AddFolder extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     let newName = this.state.name;
-    console.log(this.state.name);
     let newFolder = {
       name: newName,
     };
-    console.log(newFolder);
     fetch("http://localhost:9090/folders", {
       method: "POST",
       headers: {
@@ -29,11 +27,16 @@ export default class AddFolder extends Component {
       },
       body: JSON.stringify(newFolder),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if(!response.ok) {
+          throw Error(response.statusText);
+        }
+       return response.json()
+      })
       .then((data) => {
-        console.log(data);
         this.context.addFolder(data);
-      });
+      })
+      .catch(err => console.log(err.message));
   };
 
   validateName() {
@@ -44,7 +47,6 @@ export default class AddFolder extends Component {
   }
 
   render() {
-    console.log("this is context", this.context);
     return (
       <div>
         <form
