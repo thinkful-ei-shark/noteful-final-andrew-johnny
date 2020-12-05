@@ -3,6 +3,8 @@ import { Redirect } from "react-router-dom";
 import './AddNote.css'
 import ApiContext from "../ApiContext";
 
+import PropTypes from 'prop-types'
+import config from '../config'
 class AddNote extends Component {
   static contextType = ApiContext;
   state = {
@@ -20,16 +22,21 @@ class AddNote extends Component {
   handleChangeContent = (e) => {
     this.setState({ content: e.currentTarget.value });
   };
+  handleChangeFolder = (e) =>{
+    console.log('tgt', e.currentTarget.value)
+    this.setState({folderId: e.currentTarget.key})
+  }
 
   handleNoteSubmit = (e) => {
     e.preventDefault();
     let newNote = {
-      name: this.state.name,
+      title: this.state.name,
       modified: new Date(),
-      folderId: e.currentTarget.querySelector("select").value,
+      folder_Id: e.currentTarget.querySelector("select").value,
       content: this.state.content,
     };
-    fetch("http://localhost:9090/notes", {
+    console.log('note to sub', newNote)
+    fetch(`${config.API_ENDPOINT}/notes`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -62,14 +69,15 @@ class AddNote extends Component {
       }
   }
   render() {
+    console.log(this.props)
     const folderOptions = this.context.folders.map((folder) => {
+      
       return (
         <option key={folder.id} value={folder.id}>
-          {folder.name}
+          {folder.folder_name}
         </option>
       );
     });
-
     let errorRender = null; 
     if(this.state.error) {
       errorRender = <p className='error-message'>{this.state.error}</p>
@@ -90,7 +98,7 @@ class AddNote extends Component {
             required
           />
           <label htmlFor="selectFolder">Select Folder:</label>
-          <select id="selectFolder">{folderOptions}</select>
+          <select onChange={(e)=>this.handleChangeFolder(e)} id="selectFolder">{folderOptions}</select>
           <label htmlFor="note-content"> Note Content: </label>
           <textarea
             id="note-content"
@@ -106,3 +114,10 @@ class AddNote extends Component {
 }
 
 export default AddNote;
+
+AddNote.PropTypes={
+  id: PropTypes.string.isRequired,
+  modified: PropTypes.string.isRequired ,
+  name: PropTypes.string.isRequired ,
+  onDeleteNote: PropTypes.func.isRequired 
+}

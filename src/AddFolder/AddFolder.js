@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import ApiContext from "../ApiContext";
-
+import config from '../config'
 import './AddFolder.css'
 
 export default class AddFolder extends Component {
@@ -21,9 +21,10 @@ export default class AddFolder extends Component {
     e.preventDefault();
     let newName = this.state.name;
     let newFolder = {
-      name: newName,
+      title: newName,
     };
-    fetch("http://localhost:9090/folders", {
+    console.log(newFolder)
+    fetch(`${config.API_ENDPOINT}/folders`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
